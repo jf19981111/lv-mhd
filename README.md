@@ -1,68 +1,70 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 使用 antd 来做模板
 
-## Available Scripts
+1. 安装 yarn add antd
 
-In the project directory, you can run:
+2. 按需引入
 
-### `npm start`
+我们需要重写配置
+引入 react-app-rewired 并修改 package.json 里的启动配置。由于新的 react-app-rewired@2.x 版本的关系，你还需要安装 customize-cra。
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+$ yarn add react-app-rewired customize-cra
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+3. 然后修改
+/* package.json */
+"scripts": {
+-   "start": "react-scripts start",
++   "start": "react-app-rewired start",
+-   "build": "react-scripts build",
++   "build": "react-app-rewired build",
+-   "test": "react-scripts test",
++   "test": "react-app-rewired test",
+}
 
-### `npm test`
+4. 然后在项目根目录创建一个 config-overrides.js 用于修改默认配置。
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+module.exports = function override(config, env) {
+  // do stuff with the webpack config...
+  return config;
+};
 
-### `npm run build`
+5. 使用 babel-plugin-import#
+babel-plugin-import 是一个用于按需加载组件代码和样式的 babel 插件（原理），现在我们尝试安装它并修改 config-overrides.js 文件。
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+$ yarn add babel-plugin-import
++ const { override, fixBabelImports } = require('customize-cra');
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+- module.exports = function override(config, env) {
+-   // do stuff with the webpack config...
+-   return config;
+- };
++ module.exports = override(
++   fixBabelImports('import', {
++     libraryName: 'antd',
++     libraryDirectory: 'es',
++     style: 'css',
++   }),
++ );
+```
+6. 然后移除前面在 src/App.css 里全量添加的 @import '~antd/dist/antd.css'; 样式代码，并且按下面的格式引入模块。
+```
+  // src/App.js
+  import React, { Component } from 'react';
+- import Button from 'antd/lib/button';
++ import { Button } from 'antd';
+  import './App.css';
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  class App extends Component {
+    render() {
+      return (
+        <div className="App">
+          <Button type="primary">Button</Button>
+        </div>
+      );
+    }
+  }
 
-### `npm run eject`
+  export default App;
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+7. 最后重启 yarn start 访问页面，antd 组件的 js 和 css 代码都会按需加载，你在控制台也不会看到这样的警告信息。关于按需加载的原理和其他方式可以阅读这里。
