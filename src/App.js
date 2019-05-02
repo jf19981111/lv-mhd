@@ -20,7 +20,7 @@ class App extends React.Component {
                 <Sider />
                 <Layout style={{ marginLeft: 200 }}>
                   <Header />
-                  <Layout.Content>
+                  <Layout.Content style={{padding: 20}}>
                     <Switch>
                       {/* 右侧的内容 */}
                       {/* 1. 图书管理 */}
