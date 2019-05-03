@@ -4,7 +4,9 @@ import React from 'react'
 
 import { Input, Table } from 'antd'
 import { BookWrap, MainWrap } from './style.js'
-import { func } from 'prop-types';
+
+// 引入 http 封装的 axios
+import http from '@/utils/http'
 
 const dataSource = [{
     key: '1',
@@ -60,11 +62,19 @@ class Book extends React.Component {
                     <MainWrap>
                         <Table dataSource={dataSource} columns={columns}></Table>
                     </MainWrap>     
-                </BookWrap>
-
-                
+                </BookWrap>   
             </React.Fragment>
         )
+    }
+
+    /**
+     * 发送请求
+     */
+    componentDidMount() {
+        http.get('/api/book')
+            .then(res => {
+                console.log(res)
+            })
     }
 }
 

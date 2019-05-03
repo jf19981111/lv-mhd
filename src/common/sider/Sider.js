@@ -2,7 +2,11 @@ import React from 'react'
 import { Layout, Menu, Icon } from 'antd';
 
 // 引入仓库
-import store from '../../store'
+import store from '@/store'
+
+// 引入 图片
+import {Logo} from './style.js'
+
 
 // 引入 Link
 import { Link } from 'react-router-dom'
@@ -31,7 +35,7 @@ class Sider extends React.Component {
                 overflow: 'auto', height: '100vh', position: 'fixed', left: 0,
               }}
               >
-                <div className="logo" />
+                <Logo />
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={this.state.defaultMenus}>
                   {
                     this.state.menus.map((item,index) => {

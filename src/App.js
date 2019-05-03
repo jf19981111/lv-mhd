@@ -1,8 +1,8 @@
 import React from 'react'
 import { Layout } from 'antd';
 
-import Sider from './common/components/Sider'
-import Header from './common/components/Header'
+import Sider from '@/common/sider/Sider.js'
+import Header from '@/common/header/Header.js'
 
 // 引入路由
 import { HashRouter, Route, Redirect, Switch } from 'react-router-dom'
