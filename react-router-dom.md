@@ -51,7 +51,7 @@ Switch 作用就是， 只匹配一条规则
 
 # styled-components
 
-目前采用的样， 然后会有冲突，会影响别的组件的样式
+目前采用的样式， 然后会有冲突，会影响别的组件的样式
 
 所以 提供了这个样式
 1. 安装 yarn add styled-components
