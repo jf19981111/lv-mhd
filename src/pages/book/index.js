@@ -1,20 +1,11 @@
 // 这是一个全新的 Book 容器组件
 import React from 'react'
-
+import { inputChange, searchBookAction, pageClickAction, getBookListAction } from './store/createActions'
 import { connect } from 'react-redux'
-import { getBookListAction } from './store/createActions'
+import BookUI from './ui'
 
-// Book 是一个 UI 组件
-const Book = (props) => {
-    console.log(props)
-    return (
-        <div>
-            我的天
-            <p>仓库中的pageNum：{ props.pageNum }</p>
-            <button onClick={ props.fn }>点我</button>
-        </div>
-    )
-}
+// 这是为了解决无法再 mapStateToProps 使用 mapDispatchToProps
+import store from '@/store'
 
 
 /**
@@ -22,9 +13,39 @@ const Book = (props) => {
  * @param {Object} state 仓库的state数据
  */
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
-        pageNum: state.book.pageNum
+        inputVal: state.book.inputVal,
+        list: state.book.list,
+        columns: [
+            {
+              key: 'bookId',
+              title: 'bookId',
+              dataIndex: 'bookId'
+          },{
+              key: 'bookName',
+              title: '图书名',
+              dataIndex: 'bookName'
+          },{
+              key: 'author',
+              title: '作者',
+              dataIndex: 'author'
+          }, {
+              key: 'coverurl',
+              title: '海报',
+              dataIndex: 'coverurl',
+              render: (text, record, index) => {
+                // console.log(text,record,index)
+                return <img src={text} alt="" />
+              }
+          }
+        ],
+        pagination: {
+            pageSize: state.book.pageSize, 
+            total: state.book.total, // 总条数
+            onChange: (page, pageSize) => {
+                store.dispatch(pageClickAction(page))
+            }
+        }
     }
 }
 
@@ -35,9 +56,20 @@ const mapStateToProps = (state) => {
  */
 const mapDispatchToProps = (dispatch) => {
     return {
-        fn: () => {
+        // 改变v输入框的 value
+        inputValChange: (e) => {
+            let value = e.target.value;
+            dispatch(inputChange(value))
+        },
+        // 搜索点击
+        searchBtnClick: () => {
+            dispatch(searchBookAction())
+        },
+        // 获取图书列表
+        getBookList: () => {
             dispatch(getBookListAction())
         }
+
     }
 }
 
@@ -50,4 +82,4 @@ const mapDispatchToProps = (dispatch) => {
 // 第二个括号里面接收一个 UI 组件
 
 // 暴露出去的是一个容器组件
-export default connect(mapStateToProps,mapDispatchToProps)(Book)
+export default connect(mapStateToProps,mapDispatchToProps)(BookUI)

@@ -49,7 +49,7 @@ class Book extends React.Component {
             pageNum: store.getState().book.pageNum, // 页数
             pageSize: store.getState().book.pageSize, // 每页显示的条数
             pagination: { 
-                defaultPageSize: store.getState().book.pageSize, 
+                pageSize: store.getState().book.pageSize, 
                 total: store.getState().book.total, // 总条数
                 onChange: this.onPageChange.bind(this)
             }

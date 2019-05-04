@@ -43,6 +43,10 @@ class BookUI extends React.Component {
             </React.Fragment>
         )
     }
+
+    componentDidMount() {
+        this.props.getBookList()
+    }
 }
 
 
