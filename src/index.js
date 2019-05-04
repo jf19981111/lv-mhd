@@ -1,101 +1,118 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter as Router, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Route, Link } from 'react-router-dom'
 
-const Home = () => {
+class App extends React.Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            isLogin: false, // 是否登录
+        }
+    }
+
+    render() {
+        const {isLogin} = this.state;
+        return (
+            <Router>
+                <div>
+                    <h1>是否登录: { isLogin ? 'ok': 'no' }</h1>
+                    <button 
+                        onClick={() => {
+                            this.setState({
+                                isLogin: !isLogin
+                            })
+                        }}
+                    >
+                    Login
+                    </button>
+                    <ul>
+                        <li><Link to="/public">公开的页面</Link></li>
+                        <li><Link to="/protected">私有页面，需要登录</Link></li>
+                    </ul>
+
+                    {/* 这里放具体的页面 */}
+                    <Route path="/public" component={ PublicPage }></Route>
+                    <Route path="/login" component={ LoginPage }></Route>
+                    {/* <Route path="/protected" component={ ProtectedPage }></Route> */}
+
+                    {/* 最简单的方式做判断 */}
+                    {/* {
+                        isLogin ? (<Route path="/protected" component={ ProtectedPage }></Route>) : null
+                    } */}
+
+                    {
+                        this.fn(ProtectedPage)
+                    }
+
+
+
+                </div>
+            </Router>
+        )
+    }
+
+    /**
+     * 高阶函数
+     * @param {Component} component 接收到的组件
+     */
+    fn(component) {
+        if (this.state.isLogin) {
+            // 这里有一个 小 bug 没有 path ，只要他有 就会渲染出来
+            return <Route component={ component }></Route>;
+        } else {
+            return null;
+        }
+    }
+}
+
+const PublicPage = () => {
+    return (
+        <h2>PublicPage</h2>
+    )
+}
+
+const ProtectedPage = () => {
+    return (
+        <h2>ProtectedPage 需要登录才能进来</h2>
+    )
+}
+
+const LoginPage = () => {
     return (
         <div>
-            <h1>Home</h1>
+            <h2>登录页面</h2>
+            <button>Login in</button>
         </div>
     )
 }
 
-const About = () => {
-    return (
-        <div>
-            <h1>About</h1>
-        </div>
-    )
-}
 
-const Detail = (props) => {
-    // console.log(props)
-    return (
-        <div>
-            <h2>详情页</h2>
-            {/* 
-                react中，当前匹配上的路由对象，可以通过 props身上的某个数据来获取
-
-                如果某个组件是路由组件，react路由会自动给你这个组件传递3个prop
-                - history  能帮我们实现编程式导航 （js来控制路由的跳转）
-                - location  location.search 获取查询字符串的参数
-                - match     match.param 获取路由动态参数
-            */}
-            <p>当前商品的ID：{props.match.params.id}</p>
-        </div>
-    )
-}
-
-const Hello = (props) => {
-    // console.log(props)
-    return (
-        <div>
-            我是一个非路由组件
-        </div>
-    )
-}
-
-const Topics = ({match}) => {
-    return (
-        <div>
-            <h1>Topics</h1>
-            <ul>
-                <li>
-                    <Link to="/topics/rendering">Rendering with React</Link>
-                </li>
-                <li>
-                    <Link to="/topics/components">Components</Link>
-                </li>
-                <li>
-                    <Link to="/topics/props">Props v. State</Link>
-                </li>
-            </ul>
-            {/* 这个下面又要根据不同的 Link 来渲染不同的文字 */}
-            <Route
-                exact
-                path={`${match.path}`}
-                render={() => <h2>Please select a topic.</h2>}
-            >
-            </Route>
-            <Route
-                path={`${match.path}/:id(rendering|components|props)`}
-                component={Detail}
-            >
-
-            </Route>
-            <Hello></Hello>
-        </div>
-    )
-}
-
+// =================================
 ReactDOM.render(
-    <Router>
-        <ul>
-            <li>
-                <Link to="/">Home</Link>
-            </li>
-            <li>
-                <Link to="/about">About</Link>
-            </li>
-            <li>
-                <Link to="/topics">Topics</Link>
-            </li>
-        </ul>
-
-        <Route path="/" exact component={Home}></Route>
-        <Route path="/about"  component={About}></Route>
-        <Route path="/topics"  component={Topics}></Route>
-
-    </Router>,
+    <App />,
     document.getElementById('root')
 )
+
+
+/**
+ * react-router-dom 实现路由拦截
+ * 
+ * 1. 实现一个高阶组件（高阶函数），
+ *  
+ *   何为高阶组件： 组件接收一个组件，返回新的组件
+ *    
+ * ```
+ * function gaojie(component) {
+ *      if (sss) {
+ *          return component
+ *      } else {
+ *          return null;
+ *      }
+ * }
+ * ```
+ * 
+ * 
+ * 
+ */
