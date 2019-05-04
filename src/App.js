@@ -11,37 +11,42 @@ import { HashRouter, Route, Redirect, Switch } from 'react-router-dom'
 import BookPage from './pages/book/index'
 import UserPage from './pages/user/index'
 
+import { Provider } from 'react-redux'
+import store from './store'
+
 
 class App extends React.Component {
     render() {
         return (
-          <HashRouter>
-              <Layout>
-                <Sider />
-                <Layout style={{ marginLeft: 200 }}>
-                  <Header />
-                  <Layout.Content style={{padding: 20}}>
-                    <Switch>
-                      {/* 右侧的内容 */}
-                      {/* 1. 图书管理 */}
-                      <Route 
-                        exact
-                        path="/book"
-                        component={BookPage}
-                      ></Route>
-                      {/* 2. 用户管理 */}
-                      <Route
-                        exact
-                        path="/user"
-                        component={UserPage}
-                      ></Route>
-                      {/* 重定向 */}
-                      <Redirect to="/book"></Redirect>
-                    </Switch>
-                  </Layout.Content>
+          <Provider store={ store }>
+            <HashRouter>
+                <Layout>
+                  <Sider />
+                  <Layout style={{ marginLeft: 200 }}>
+                    <Header />
+                    <Layout.Content style={{padding: 20}}>
+                      <Switch>
+                        {/* 右侧的内容 */}
+                        {/* 1. 图书管理 */}
+                        <Route 
+                          exact
+                          path="/book"
+                          component={BookPage}
+                        ></Route>
+                        {/* 2. 用户管理 */}
+                        <Route
+                          exact
+                          path="/user"
+                          component={UserPage}
+                        ></Route>
+                        {/* 重定向 */}
+                        <Redirect to="/book"></Redirect>
+                      </Switch>
+                    </Layout.Content>
+                  </Layout>
                 </Layout>
-              </Layout>
-            </HashRouter>
+              </HashRouter>
+            </Provider>
           );
     }
 }
