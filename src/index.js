@@ -1,6 +1,49 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter as Router, Route, Link } from 'react-router-dom'
+import { HashRouter as Router, Route, Link, Redirect } from 'react-router-dom'
+
+
+/**
+ * 定义一个高阶组件,私有路由组件
+ * props.component 是接收到的一个组件
+ */
+const PrivateRoute = ({ component: Component, ...reset} ) => {
+    // console.log(reset)
+    // let render = null;
+
+    return (
+        <Route
+            {...reset}
+            render={() => {
+                if (reset.isLogin) {
+                    //有登录
+                    return <Component />
+                } else {
+                    return <Redirect from={reset.path} to="/login" />
+                }
+            }}
+        >
+            
+        </Route>
+    )
+
+
+
+
+    // if (isLogin) {
+    //     render = <Route path={path} component={Component}></Route>
+    // } else {
+    //     render = '未登录'
+    // }
+    // return (
+    //     <div>
+    //         { render }
+    //     </div>
+    // )
+}
+
+
+
 
 class App extends React.Component {
 
@@ -35,6 +78,13 @@ class App extends React.Component {
                     {/* 这里放具体的页面 */}
                     <Route path="/public" component={ PublicPage }></Route>
                     <Route path="/login" component={ LoginPage }></Route>
+                    
+                    <PrivateRoute
+                        isLogin={isLogin}
+                        path="/protected"
+                        component={ProtectedPage}
+                    ></PrivateRoute>
+
                     {/* <Route path="/protected" component={ ProtectedPage }></Route> */}
 
                     {/* 最简单的方式做判断 */}
@@ -42,9 +92,10 @@ class App extends React.Component {
                         isLogin ? (<Route path="/protected" component={ ProtectedPage }></Route>) : null
                     } */}
 
-                    {
+                    {/* {   
+                        // 高阶函数
                         this.fn(ProtectedPage)
-                    }
+                    } */}
 
 
 
@@ -57,14 +108,14 @@ class App extends React.Component {
      * 高阶函数
      * @param {Component} component 接收到的组件
      */
-    fn(component) {
-        if (this.state.isLogin) {
-            // 这里有一个 小 bug 没有 path ，只要他有 就会渲染出来
-            return <Route component={ component }></Route>;
-        } else {
-            return null;
-        }
-    }
+    // fn(component) {
+    //     if (this.state.isLogin) {
+    //         // 这里有一个 小 bug 没有 path ，只要他有 就会渲染出来
+    //         return <Route component={ component }></Route>;
+    //     } else {
+    //         return null;
+    //     }
+    // }
 }
 
 const PublicPage = () => {
